@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from comms.ldap_login import LDAP
+from comms.sql_login import SQL
 from flask_bootstrap import Bootstrap
 from dotenv import load_dotenv
 import os
@@ -14,15 +15,15 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secKey'
 Bootstrap(app)
 ldap = LDAP()
+sql = SQL()
+use_ldap = True if os.environ.get("USE_LDAP") == "1" else False
 
 
 @app.route('/login', methods=["POST"])
 def login():
-    print(request.form["username"])
-    print(request.form["password"])
     
-
-    logged_in_user = ldap.log_in(request.form["username"], request.form["password"])
+    
+    logged_in_user = ldap.log_in(request.form["username"], request.form["password"]) if use_ldap else sql.login(request.form["username"], request.form["password"])
     if logged_in_user is None:
         return render_template("index.html", bad_login=True), 401
     return render_template("user_page.html", username=logged_in_user)

@@ -1,3 +1,0 @@
-ldap version
-(objectclass=*)(&(entryDN=*)(objectclass=*))
-toto vrati nieco len ak je to OpenLDAP 2.4+, inak je to error.
